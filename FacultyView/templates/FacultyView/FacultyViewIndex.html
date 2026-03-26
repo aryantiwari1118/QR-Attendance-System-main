@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Attendance System</title>
+    <link rel="stylesheet" href="{% static 'FacultyView/Index_Style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>SMART EDUCATION HUB</h1>
+      <h2>Attendance Portal</h2>
+      <div class="header-nav">
+        <a href="{% url 'class_distribution' %}" class="header-link">
+          <i class="fas fa-chart-bar"></i> View Classes
+        </a>
+      </div>
+    </header>
+    <main>
+      <!-- Date-wise Viewing Section -->
+      <div class="date-filter-section">
+        <h3>View Attendance by Date</h3>
+        <div class="date-filter-container">
+          <select id="date-select" onchange="filterByDate(this.value)">
+            <option value="">-- Select Date --</option>
+            {% for date in attendance_dates %}
+            <option value="{{ date|date:'Y-m-d' }}" {% if date|date:'Y-m-d' == selected_date %}selected{% endif %}>
+              {{ date|date:'d M Y' }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {% if selected_date and students_with_attendance %}
+        <div class="previous-attendance">
+          <h3>Attendance on {{ selected_date|date:'d M Y' }}</h3>
+          <ul class="student-list">
+            {% for student in students_with_attendance %}
+            <li class="student">
+              <span class="student-name">
+                {{student.s_roll}} - {{ student.s_fname }} {{student.s_lname}}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+
+      <hr style="width: 90%; max-width: 900px;" />
+
+      <!-- Today's Attendance Section -->
+      <div style="display: flex; gap: 2em; justify-content: center; flex-wrap: wrap;">
+        <div class="marked-list">
+          <h2>Present Count (Today) : {{ students|length }}</h2>
+          <h3 class="present-list">Present Students</h3>
+
+          <form class="attendance-form" method="POST">
+            <ul class="student-list">
+              {% csrf_token %} {% for student in students %}
+              <li class="student">
+                <label class="student-label">
+                  <span class="student-name">
+                    {{student.s_roll}} - {{ student.s_fname }} {{student.s_lname}}
+                  </span>
+                  <button
+                    type="submit"
+                    name="student_id"
+                    value="{{student.s_roll}}"
+                    class="delete-button"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </label>
+              </li>
+              {% endfor %}
+            </ul>
+          </form>
+
+          <div class="button-group">
+            <a href="{% url 'add_manually' %}"><button class="add-button">+ Add Manually</button></a>
+            <form method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" name="submit_attendance" value="true" class="submit-button" {% if students|length == 0 %}disabled{% endif %}>
+                ✔ Submit Attendance
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="attendance-container">
+          <div class="attendance-card">
+            <h2>
+              Connect to College Wi-Fi and Scan the QR Code to Mark Attendance
+            </h2>
+            {% comment %}
+            <a href="{% url 'add_manually' %}">
+              {% endcomment %}
+              <img
+                src="{% static 'FacultyView/qrcode.png' %}"
+                alt="QR Code"
+                width="200"
+                height="200"
+              />
+            </a>
+            <p class="hint">Please scan the QR code to mark your attendance.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+    </footer>
+
+    <script>
+      function filterByDate(date) {
+        if (date) {
+          window.location.href = '/?date=' + date;
+        } else {
+          window.location.href = '/';
+        }
+      }
+    </script>
+  </body>
+</html>

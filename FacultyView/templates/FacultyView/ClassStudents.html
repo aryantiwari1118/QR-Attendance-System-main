@@ -1,0 +1,271 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ class_name }} - QR Attendance System</title>
+    <link rel="stylesheet" href="{% static 'FacultyView/Index_Style.css' %}">
+    <style>
+        .class-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+            max-width: 900px;
+        }
+
+        .class-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .class-header h2 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+
+        .class-header p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .students-table thead {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #0056b3;
+        }
+
+        .students-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #0056b3;
+        }
+
+        .students-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .students-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .students-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .roll-number {
+            font-weight: 600;
+            color: #0056b3;
+        }
+
+        .student-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .attendance-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .attendance-badge.present {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .attendance-badge.absent {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-item .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-buttons button {
+            background-color: #0056b3;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-buttons button:hover {
+            background-color: #004494;
+        }
+
+        .nav-buttons .secondary {
+            background-color: #6c757d;
+        }
+
+        .nav-buttons .secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .no-students {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .no-students h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .class-container {
+                padding: 15px;
+            }
+
+            .students-table {
+                font-size: 14px;
+            }
+
+            .students-table th,
+            .students-table td {
+                padding: 8px;
+            }
+
+            .student-name {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .student-avatar {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SMART EDUCATION HUB</h1>
+        <h2>Student Details</h2>
+    </header>
+
+    <main>
+        <div class="class-container">
+            <div class="class-header">
+                <h2>{{ class_name }}</h2>
+                <p>Branch: {{ branch }} | Year: {{ year }} | Section: {{ section }}</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="label">Total Students</div>
+                    <div class="value">{{ students|length }}</div>
+                </div>
+            </div>
+
+            {% if students %}
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Student Name</th>
+                        <th>Attendance Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td class="roll-number">{{ student.s_roll }}</td>
+                        <td class="student-name">
+                            <div class="student-avatar">{{ student.s_fname|first|upper }}</div>
+                            <span>{{ student.s_fname }} {{ student.s_lname }}</span>
+                        </td>
+                        <td>
+                            {% with count=attendance_stats|get_item:student.s_roll %}
+                                {% if count > 0 %}
+                                    <span class="attendance-badge present">{{ count }} days</span>
+                                {% else %}
+                                    <span class="attendance-badge absent">0 days</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-students">
+                <h3>No students in this class</h3>
+            </div>
+            {% endif %}
+
+            <div class="nav-buttons">
+                <a href="{% url 'class_distribution' %}"><button>← Back to Class Distribution</button></a>
+                <a href="/"><button class="secondary">← Back to Attendance Portal</button></a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+    </footer>
+</body>
+</html>

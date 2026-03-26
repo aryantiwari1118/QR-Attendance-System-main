@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Submitted - QR Attendance System</title>
+    <link rel="stylesheet" href="{% static 'FacultyView/Index_Style.css' %}" />
+  </head>
+  <body>
+    <header>
+      <h1>SMART EDUCATION HUB</h1>
+      <h2>Attendance Portal</h2>
+    </header>
+
+    <main style="text-align: center; padding: 50px;">
+      <div style="background-color: #d4edda; padding: 30px; border-radius: 10px; border: 2px solid #28a745;">
+        <h2 style="color: #155724; margin-bottom: 20px;">✔ Attendance Submitted Successfully!</h2>
+        <p style="font-size: 18px; color: #155724; margin-bottom: 30px;">
+          The attendance records have been saved to the database.
+        </p>
+        <a href="/"><button style="padding: 10px 30px; font-size: 16px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Back to Attendance Portal
+        </button></a>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+    </footer>
+  </body>
+</html>
