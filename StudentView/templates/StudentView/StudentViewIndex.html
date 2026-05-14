@@ -40,7 +40,7 @@
             </li>
             {% endfor %}
           </ul>
-          <button type="submit" class="submit-button">Submit</button>
+          <button type="submit" class="submit-button" id="submit-btn" disabled>Submit</button>
         </form>
       </section>
     </div>
@@ -50,15 +50,24 @@
     </footer>
 
     <script>
-      const checkboxes = document.querySelectorAll(".student");
+      const form = document.querySelector(".attendance-form");
+      const submitBtn = document.getElementById("submit-btn");
+      const checkboxes = document.querySelectorAll(".student-checkbox");
 
       checkboxes.forEach((checkbox) => {
         checkbox.addEventListener("change", () => {
-          checkboxes.forEach((otherCheckbox) => {
-            if (otherCheckbox !== checkbox) {
-              otherCheckbox.querySelector(".student-checkbox").checked = false;
-            }
-          });
+          if (checkbox.checked) {
+            checkboxes.forEach((other) => {
+              if (other !== checkbox) {
+                other.checked = false;
+              }
+            });
+            submitBtn.disabled = false;
+          } else {
+            // Check if any other is checked (though JS logic makes it only one)
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            submitBtn.disabled = !anyChecked;
+          }
         });
       });
     </script>

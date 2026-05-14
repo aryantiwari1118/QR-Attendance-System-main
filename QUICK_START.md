@@ -15,13 +15,15 @@ python manage.py migrate
 
 ### Step 3: Start Server
 ```powershell
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
 
 ### Step 4: Access the Application
 - **Main Page**: http://localhost:8000/
 - **Class Distribution**: http://localhost:8000/class_distribution
 - **Admin**: http://localhost:8000/admin/
+
+
 
 ---
 

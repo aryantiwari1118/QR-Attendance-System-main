@@ -10,19 +10,24 @@ present = set()
 
 
 def add_manually_post(request):
+    if "student-name" not in request.POST:
+        return HttpResponseRedirect(reverse("add_manually"))
+        
     student_roll = request.POST["student-name"]
-    student = Student.objects.get(s_roll=student_roll)
-    present.add(student)
-    
-    # Save to database with today's date
-    today = timezone.now().date()
-    Attendance.objects.update_or_create(
-        student=student,
-        date=today,
-        defaults={'is_present': True}
-    )
-    
-    return HttpResponseRedirect("/submitted")
+    try:
+        student = Student.objects.get(s_roll=student_roll)
+        present.add(student)
+        
+        # Save to database with today's date
+        today = timezone.now().date()
+        Attendance.objects.update_or_create(
+            student=student,
+            date=today,
+            defaults={'is_present': True}
+        )
+        return HttpResponseRedirect("/submitted")
+    except Student.DoesNotExist:
+        return HttpResponseRedirect(reverse("add_manually"))
 
 
 def submitted(request):
